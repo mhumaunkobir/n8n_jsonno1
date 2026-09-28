@@ -1,0 +1,170 @@
+{
+  "name": "My workflow 9",
+  "nodes": [
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are a helpful and friendly customer assistant.\n\nYou have access to customer data through the connected Google Sheets tool.\n\nCustomer's question:\n{{ $json.chatInput }}\n\n### Instructions:\n\n1. When the customer asks for their information, use the Google Sheets tool to find the relevant customer's data.\n2. Do NOT guess or invent any customer information.\n3. Always retrieve the information from the Google Sheet when the answer depends on stored customer data.\n4. Find the customer's row using the available customer information from the conversation or chat history.\n5. After finding the correct row, return the requested information clearly.\n\nFor example, if the customer asks:\n\n\"What is my first product name?\"\n\nUse the Google Sheets tool to find the customer's record and return the value of their first product name.\n\nIf the customer asks:\n\n\"What is first product name?\"\n\nUse the Google Sheets tool and return:\n\n\"Your product is [lead_name] and you are [Age] years old.\"\n\nIf the requested information cannot be found in the Google Sheet, say:\n\n\"I couldn't find that information in our records.\"\n\nNever make up information that is not available in the Google Sheet.\nyou should avoid extra answer and its hardly prohibited . ",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        -64,
+        -32
+      ],
+      "id": "6312b3af-6b90-41e1-ac2d-09ce0c4523e2",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": "dots-studio/dots-3-note-preview:free",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        -224,
+        128
+      ],
+      "id": "159170e0-95d9-4373-b6ad-a6fa1cab79d8",
+      "name": "OpenRouter Chat Model",
+      "credentials": {
+        "openRouterApi": {
+          "id": "u9gnJ4bQqZ8Ppwjw",
+          "name": "OpenRouter account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
+      "typeVersion": 1.4,
+      "position": [
+        -48,
+        144
+      ],
+      "id": "afbd2921-9938-4526-b8a8-b58519b035ce",
+      "name": "Postgres Chat Memory",
+      "credentials": {
+        "postgres": {
+          "id": "vKKYlSJX662V7ilu",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        -352,
+        -64
+      ],
+      "id": "b82bd209-96c6-4e66-a677-2f4b0478c9e8",
+      "name": "When chat message received",
+      "webhookId": "8c332681-03ae-4bc1-bd3d-749b9ea7d077"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1e_e5IIBxbYoieTSpm0MEb9uOu5ArlAgNeg3yjT7-RBs",
+          "mode": "list",
+          "cachedResultName": "data store",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1e_e5IIBxbYoieTSpm0MEb9uOu5ArlAgNeg3yjT7-RBs/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1e_e5IIBxbYoieTSpm0MEb9uOu5ArlAgNeg3yjT7-RBs/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        144,
+        144
+      ],
+      "id": "61f4c7d0-9324-4ab6-8a2c-0e6a78eb136b",
+      "name": "Get row(s) in sheet in Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "KFrTcJT48DqjEvpb",
+          "name": "Google Sheets account 2"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "OpenRouter Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres Chat Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        []
+      ]
+    },
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet in Google Sheets": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "699109b3-41cf-4533-b386-6274e5b6c6ea",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "a31719c4e382ba616a53f97bd84a6086abf7c48f6b7816e0326210477284e535"
+  },
+  "nodeGroups": [],
+  "id": "O6iRA1XDlaS2uYPW",
+  "tags": []
+}
